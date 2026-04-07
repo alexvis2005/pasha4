@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Пасхальный квест | Сайт №1 | Задание первого QR-кода</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Georgia', 'Times New Roman', serif;
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: #120b05;
+            overflow-x: hidden;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 190, 80, 0.12), rgba(160, 85, 20, 0.05), transparent 70%);
+            animation: fastRotate 20s linear infinite;
+        }
+
+        @keyframes fastRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .floating-particle {
+            position: absolute;
+            background: rgba(255, 205, 130, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(4px);
+            animation: fastFloat 8s infinite ease-in-out;
+        }
+
+        @keyframes fastFloat {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.2; }
+            50% { transform: translateY(-50px) translateX(25px) scale(1.3); opacity: 0.4; }
+        }
+
+        .site-card {
+            max-width: 650px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 252, 245, 0.97);
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 150, 0.3);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .easter-header {
+            background: linear-gradient(135deg, #b55a1a, #7a3a0c);
+            padding: 24px 16px 20px;
+            text-align: center;
+            color: #ffefcf;
+            border-bottom: 3px solid #e6b87e;
+        }
+
+        .easter-header h1 {
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-weight: normal;
+            text-shadow: 1px 1px 0 #4a2800;
+            margin: 6px 0;
+        }
+
+        .greeting {
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .page {
+            padding: 24px 20px;
+            transition: opacity 0.25s ease;
+            background: #fffcf5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 20px 24px;
+            background: #fffcf5;
+            gap: 16px;
+        }
+
+        button {
+            background: #e7cba5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            font-family: inherit;
+            color: #3e2a1a;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        button.primary {
+            background: #c2691e;
+            color: #fff2e0;
+            box-shadow: 0 3px 0 #733f0e;
+        }
+
+        h2, h3 {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #9b4a1a;
+            letter-spacing: 0.5px;
+            border-left: 4px solid #d69648;
+            padding-left: 14px;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+
+        .task-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+
+        .task-list li {
+            margin: 12px 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            padding-left: 24px;
+            position: relative;
+            color: #2c241a;
+        }
+
+        .task-list li::before {
+            content: "•";
+            color: #c27e3a;
+            position: absolute;
+            left: 6px;
+            font-size: 1.2rem;
+        }
+
+        .qr-sticker {
+            background: #efe2cf;
+            border-radius: 28px;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 20px;
+            border: 1px solid #e2cbaa;
+            color: #5f3e1c;
+        }
+
+        .choice-block {
+            background: #faf0e2;
+            border-radius: 40px;
+            padding: 20px 16px;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .choice-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 16px 0 8px;
+        }
+
+        .choice-btn {
+            background: #e7d5bc;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            min-width: 170px;
+        }
+
+        .choice-btn.active {
+            background: #c2691e;
+            color: white;
+        }
+
+        .randomizer-box {
+            background: #fef3e6;
+            border-radius: 36px;
+            padding: 20px 16px;
+            text-align: center;
+            margin: 16px 0;
+            border: 1px solid #e7cfaa;
+        }
+
+        .color-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-top: 12px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .manual-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 16px 0 8px;
+        }
+
+        .color-option-btn {
+            background: #f5e5d0;
+            border: 1px solid #ddb982;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: inherit;
+            color: #4f3118;
+        }
+
+        .color-option-btn:active {
+            transform: scale(0.95);
+        }
+
+        .team-color-highlight {
+            background: #f7ecdd;
+            border-left: 6px solid #d49146;
+            padding: 12px 16px;
+            border-radius: 24px;
+            margin: 16px 0;
+            color: #4d2f12;
+            font-size: 0.9rem;
+        }
+
+        .task-block {
+            background: #fef4e8;
+            border-radius: 36px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #f0dcbf;
+        }
+
+        .code1-task-card {
+            background: #fff7ed;
+            padding: 18px;
+            border-radius: 32px;
+            text-align: center;
+            margin-top: 12px;
+            border: 1px solid #e6cfa8;
+            word-wrap: break-word;
+        }
+
+        .code1-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #b35f1a;
+            background: #fffaef;
+            padding: 14px;
+            border-radius: 36px;
+            word-wrap: break-word;
+            line-height: 1.35;
+        }
+
+        .code1-text span {
+            display: inline-block;
+            font-size: 1.3rem;
+            margin-top: 6px;
+            word-break: break-word;
+        }
+
+        .site-badge {
+            display: inline-block;
+            background: #d49146;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .footer-small {
+            text-align: center;
+            font-size: 0.65rem;
+            padding: 14px;
+            background: #f9efdf;
+            color: #9b6a3a;
+            border-top: 1px solid #f0e0c8;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2c5a1e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 85%;
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 550px) {
+            body { padding: 12px; }
+            .page { padding: 18px 16px; }
+            .easter-header h1 { font-size: 1.3rem; }
+            h2, h3 { font-size: 1.1rem; padding-left: 10px; }
+            .task-list li { font-size: 0.85rem; }
+            .code1-text { font-size: 0.95rem; padding: 10px; }
+            .code1-text span { font-size: 1.1rem; }
+            .choice-btn { min-width: 140px; font-size: 0.8rem; padding: 8px 12px; }
+            .color-option-btn { padding: 6px 14px; font-size: 0.8rem; }
+            .toast-notification { font-size: 0.8rem; padding: 10px 18px; white-space: normal; max-width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="animated-bg">
+    <div class="bg-glow"></div>
+    <div class="floating-particle" style="width: 180px; height: 180px; top: 10%; left: -5%; animation-duration: 7s;"></div>
+    <div class="floating-particle" style="width: 250px; height: 250px; bottom: 5%; right: -10%; animation-duration: 9s; opacity: 0.15;"></div>
+    <div class="floating-particle" style="width: 120px; height: 120px; top: 60%; left: 80%; animation-duration: 6s;"></div>
+    <div class="floating-particle" style="width: 90px; height: 90px; top: 20%; left: 70%; animation-duration: 7.5s;"></div>
+    <div class="floating-particle" style="width: 200px; height: 200px; bottom: 30%; left: -8%; animation-duration: 10s; opacity: 0.1;"></div>
+</div>
+
+<div class="site-card" id="app">
+    <div class="easter-header">
+        <h1>ХРИСТОС ВОСКРЕСЕ</h1>
+        <div class="greeting">Пасхальный конкурс</div>
+    </div>
+
+    <!-- СТРАНИЦА 1: приветствие -->
+    <div id="page1" class="page">
+        <h2>дорогой друг!</h2>
+        <p style="font-size:1rem; margin: 8px 0 16px 0; color:#9b5a28;">Воистину воскресе!</p>
+        <p style="font-size:0.95rem;">Мы предлагаем тебе поучаствовать в пасхальном конкурсе</p>
+        <ul class="task-list">
+            <li>найди комнату своего цвета</li>
+            <li>собери все QR коды, их 5, это важно</li>
+            <li>выполните задание именно ВАШЕЙ команды</li>
+            <li>постарайтесь пребывать в состоянии пасхальной радости сегодня и всю жизнь</li>
+        </ul>
+        <div class="qr-sticker">
+            ★ первый QR-код — определите цвет команды ★
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 2: выбор цвета -->
+    <div id="page2" class="page hidden">
+        <div class="site-badge">◈ ПЕРВЫЙ QR-КОД ◈</div>
+        <h3>определение цвета команды</h3>
+        
+        <div class="choice-block">
+            <p style="margin-bottom: 10px; font-size:0.9rem;"><strong>Это ваш первый QR-код или вы уже знаете цвет?</strong></p>
+            <div class="choice-buttons">
+                <button id="firstQrBtn" class="choice-btn">📱 Это мой первый QR код</button>
+                <button id="knowColorBtn" class="choice-btn">🎨 Я знаю цвет команды</button>
+            </div>
+        </div>
+
+        <div id="randomizerBlock" class="randomizer-box" style="display: none;">
+            <p style="font-size:0.9rem;">🎲 Случайный выбор цвета</p>
+            <button id="rollColorBtn" class="primary" style="background:#c2691e;">Получить цвет</button>
+            <div id="colorResult" style="margin-top: 16px;"></div>
+        </div>
+
+        <div id="manualBlock" style="display: none;">
+            <div class="team-color-highlight" id="infoNoColorYet" style="margin-bottom: 8px;">
+                Выберите цвет вашей команды:
+            </div>
+            <div class="manual-select" id="manualColorButtons">
+                <button data-color="красный" class="color-option-btn" style="background:#f0cfcf;">красный</button>
+                <button data-color="синий" class="color-option-btn" style="background:#d1e2f5;">синий</button>
+                <button data-color="зеленый" class="color-option-btn" style="background:#d3ecd0;">зеленый</button>
+                <button data-color="желтый" class="color-option-btn" style="background:#f9efcf;">желтый</button>
+                <button data-color="фиолетовый" class="color-option-btn" style="background:#e3d5f0;">фиолетовый</button>
+                <button data-color="розовый" class="color-option-btn" style="background:#f8dfea;">розовый</button>
+            </div>
+        </div>
+        
+        <div id="selectedColorInfo" class="team-color-highlight" style="margin-top: 12px; display: none; background:#e8f0e0; border-left-color:#6f9e3a;">
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 3: задание по 1 КОДУ (локация) -->
+    <div id="page3" class="page hidden">
+        <div class="site-badge">◈ ПЕРВЫЙ QR-КОД — ЗАДАНИЕ ◈</div>
+        <h3>задание вашей команды</h3>
+        <div id="teamDisplayBlock" class="team-color-highlight">
+            Цвет команды: <strong><span id="currentTeamColorSpan" style="font-size:1rem;">—</span></strong>
+        </div>
+        
+        <div class="task-block">
+            <p style="font-size:0.95rem; margin-bottom: 10px;"><strong>Вам нужно выполнить задание, выполнив ряд условий.</strong></p>
+            <p style="font-size:0.9rem;"><strong>сказать хором (кодовую) фразу:</strong></p>
+            <div class="code1-task-card">
+                <div id="code1TaskDisplay" class="code1-text">
+                    • выберите цвет команды •
+                </div>
+            </div>
+            <p style="margin-top: 16px; font-size:0.8rem; color:#7a561f; text-align:center;">Задание с первого QR-кода. Запомните и выполните вместе с командой.</p>
+        </div>
+
+        <div class="qr-sticker">
+            Напоминание: всего пять QR-кодов. Каждый открывает новое условие.<br>
+            Данный сайт показывает задание из первого кода: место, где нужно сказать фразу.
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="prevBtn" disabled>◀ Назад</button>
+        <button id="nextBtn" class="primary">Вперёд ▶</button>
+    </div>
+    <div class="footer-small">
+        Христос Воскресе! Радость пасхальная да пребудет с тобой
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // САЙТ №1: задание 1-го кода (локация для фразы)
+    // Цвета: красный, синий, зеленый, желтый, фиолетовый, розовый
+    // По ТЗ:
+    // 1-красный: НА ФОНЕ СЦЕНЫ
+    // 2-синий: НА ФОНЕ ГАРДЕРОБА
+    // 3-зеленый: В БУФЕТЕ
+    // 4-желтый: В ФОЙЕ
+    // 5-фиолетовый: НА ФОНЕ ВЫСТАВКИ
+    // 6-розовый: НА ФОНЕ ЛЕСТНИЦЫ
+    // --------------------------------------------------------------
+    
+    const colorList = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'розовый'];
+    
+    const code1TaskMap = {
+        'красный': 'НА ФОНЕ СЦЕНЫ',
+        'синий': 'НА ФОНЕ ГАРДЕРОБА',
+        'зеленый': 'В БУФЕТЕ',
+        'желтый': 'В ФОЙЕ',
+        'фиолетовый': 'НА ФОНЕ ВЫСТАВКИ',
+        'розовый': 'НА ФОНЕ ЛЕСТНИЦЫ'
+    };
+    
+    let currentPage = 1;
+    const totalPages = 3;
+    let teamColor = null;
+    let selectionMode = null;
+    
+    // DOM элементы
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    const page3 = document.getElementById('page3');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const firstQrBtn = document.getElementById('firstQrBtn');
+    const knowColorBtn = document.getElementById('knowColorBtn');
+    const randomizerBlock = document.getElementById('randomizerBlock');
+    const manualBlock = document.getElementById('manualBlock');
+    const rollBtn = document.getElementById('rollColorBtn');
+    const colorResultDiv = document.getElementById('colorResult');
+    const selectedColorInfo = document.getElementById('selectedColorInfo');
+    const currentTeamColorSpan = document.getElementById('currentTeamColorSpan');
+    const code1TaskDisplay = document.getElementById('code1TaskDisplay');
+    
+    function showToast(message, isError = false) {
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) existingToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.textContent = message;
+        if (isError) toast.style.background = '#a13d1a';
+        else toast.style.background = '#2c5a1e';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+    
+    function getColorBg(colorName) {
+        const map = {
+            'красный': '#f3dede', 'синий': '#e1ecf7', 'зеленый': '#e2f0df', 
+            'желтый': '#faf0d3', 'фиолетовый': '#ede5f7', 'розовый': '#fce8ef'
+        };
+        return map[colorName] || '#f8f0e4';
+    }
+    
+    function getColorText(colorName) {
+        const map = {
+            'красный': '#a13d1a','синий':'#2b5580','зеленый':'#2d6e2e',
+            'желтый':'#8a691e','фиолетовый':'#5f3a80','розовый':'#a54364'
+        };
+        return map[colorName] || '#5a3e22';
+    }
+    
+    function saveColor() {
+        if (teamColor) localStorage.setItem('easterTeamColor_site1', teamColor);
+        else localStorage.removeItem('easterTeamColor_site1');
+    }
+    
+    function loadColor() {
+        const saved = localStorage.getItem('easterTeamColor_site1');
+        if (saved && colorList.includes(saved)) teamColor = saved;
+        else teamColor = null;
+    }
+    
+    function updateTaskDisplay() {
+        if (!teamColor) {
+            if (currentTeamColorSpan) currentTeamColorSpan.innerText = 'не выбран';
+            if (code1TaskDisplay) {
+                code1TaskDisplay.innerHTML = '• выберите цвет команды на второй странице •';
+            }
+            return;
+        }
+        currentTeamColorSpan.innerText = teamColor.toUpperCase();
+        const task = code1TaskMap[teamColor];
+        if (code1TaskDisplay) {
+            code1TaskDisplay.innerHTML = `<span style="display:inline-block; font-size:1.3rem; line-height:1.3; word-break:break-word;">${task}</span>`;
+        }
+    }
+    
+    function setTeamColor(color) {
+        teamColor = color;
+        saveColor();
+        
+        showToast(`✓ Цвет команды: ${color.toUpperCase()}`);
+        
+        if (currentPage === 2) {
+            if (selectionMode === 'random' && colorResultDiv) {
+                colorResultDiv.innerHTML = `
+                    <div class="color-badge" style="background:${getColorBg(color)}; color:${getColorText(color)}">
+                        ${color.toUpperCase()}
+                    </div>
+                `;
+            }
+            if (selectedColorInfo) {
+                selectedColorInfo.style.display = 'block';
+                selectedColorInfo.innerHTML = `✓ Выбран цвет команды: <strong>${color.toUpperCase()}</strong><br>Теперь переходите на третью страницу.`;
+                setTimeout(() => {
+                    selectedColorInfo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+        if (currentPage === 3) updateTaskDisplay();
+    }
+    
+    function randomColor() {
+        return colorList[Math.floor(Math.random() * colorList.length)];
+    }
+    
+    function handleRoll() {
+        const newColor = randomColor();
+        setTeamColor(newColor);
+        if (rollBtn) {
+            rollBtn.style.transform = 'scale(0.96)';
+            setTimeout(() => { if(rollBtn) rollBtn.style.transform = ''; }, 150);
+        }
+    }
+    
+    function setupManualButtons() {
+        document.querySelectorAll('#manualColorButtons .color-option-btn').forEach(btn => {
+            btn.removeEventListener('click', manualHandler);
+            btn.addEventListener('click', manualHandler);
+        });
+    }
+    
+    function manualHandler(e) {
+        const col = e.currentTarget.getAttribute('data-color');
+        if (col && colorList.includes(col)) {
+            setTeamColor(col);
+            e.currentTarget.style.transform = 'scale(0.95)';
+            setTimeout(() => { if(e.currentTarget) e.currentTarget.style.transform = ''; }, 150);
+        }
+    }
+    
+    function setSelectionMode(mode) {
+        selectionMode = mode;
+        if (mode === 'random') {
+            randomizerBlock.style.display = 'block';
+            manualBlock.style.display = 'none';
+            firstQrBtn.classList.add('active');
+            knowColorBtn.classList.remove('active');
+            if (teamColor && colorResultDiv) {
+                colorResultDiv.innerHTML = `
+                    <div class="color-badge" style="background:${getColorBg(teamColor)}; color:${getColorText(teamColor)}">
+                        ${teamColor.toUpperCase()}
+                    </div>
+                `;
+            } else {
+                if (colorResultDiv) colorResultDiv.innerHTML = `<span style="opacity:0.7;">⚡ Нажмите «Получить цвет»</span>`;
+            }
+            if (selectedColorInfo) selectedColorInfo.style.display = teamColor ? 'block' : 'none';
+            if (teamColor && selectedColorInfo) {
+                selectedColorInfo.innerHTML = `✓ Цвет команды: <strong>${teamColor.toUpperCase()}</strong>`;
+            }
+        } else if (mode === 'manual') {
+            randomizerBlock.style.display = 'none';
+            manualBlock.style.display = 'block';
+            knowColorBtn.classList.add('active');
+            firstQrBtn.classList.remove('active');
+            if (selectedColorInfo) selectedColorInfo.style.display = teamColor ? 'block' : 'none';
+            if (colorResultDiv) colorResultDiv.innerHTML = '';
+            if (teamColor && selectedColorInfo) {
+                selectedColorInfo.innerHTML = `✓ Цвет команды: <strong>${teamColor.toUpperCase()}</strong>`;
+            }
+        }
+    }
+    
+    function updatePages() {
+        page1.classList.add('hidden');
+        page2.classList.add('hidden');
+        page3.classList.add('hidden');
+        if (currentPage === 1) page1.classList.remove('hidden');
+        if (currentPage === 2) page2.classList.remove('hidden');
+        if (currentPage === 3) page3.classList.remove('hidden');
+        
+        prevBtn.disabled = (currentPage === 1);
+        nextBtn.textContent = (currentPage === totalPages) ? 'Завершить' : 'Вперёд →';
+        
+        if (currentPage === 2) {
+            if (selectionMode === 'random') {
+                setSelectionMode('random');
+            } else if (selectionMode === 'manual') {
+                setSelectionMode('manual');
+            } else {
+                randomizerBlock.style.display = 'none';
+                manualBlock.style.display = 'none';
+                firstQrBtn.classList.remove('active');
+                knowColorBtn.classList.remove('active');
+                if (selectedColorInfo) selectedColorInfo.style.display = 'none';
+            }
+            if (teamColor && selectionMode && selectedColorInfo) {
+                selectedColorInfo.style.display = 'block';
+                selectedColorInfo.innerHTML = `✓ Выбран цвет команды: <strong>${teamColor.toUpperCase()}</strong>`;
+            }
+        }
+        if (currentPage === 3) updateTaskDisplay();
+    }
+    
+    function nextPage() {
+        if (currentPage < totalPages) {
+            if (currentPage === 2 && !teamColor) {
+                showToast('⚠️ Сначала выберите цвет команды', true);
+                return;
+            }
+            currentPage++;
+            updatePages();
+            if (currentPage === 3 && !teamColor) {
+                currentPage--;
+                updatePages();
+                showToast('⚠️ Цвет команды не выбран', true);
+            }
+        } else {
+            showToast('Христос Воскресе! Запомните задание и найдите остальные QR-коды');
+        }
+    }
+    
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePages();
+        }
+    }
+    
+    function init() {
+        loadColor();
+        updatePages();
+        
+        if (firstQrBtn) firstQrBtn.addEventListener('click', () => setSelectionMode('random'));
+        if (knowColorBtn) knowColorBtn.addEventListener('click', () => setSelectionMode('manual'));
+        if (rollBtn) rollBtn.addEventListener('click', handleRoll);
+        if (nextBtn) nextBtn.addEventListener('click', nextPage);
+        if (prevBtn) prevBtn.addEventListener('click', prevPage);
+        setupManualButtons();
+        
+        if (teamColor && currentPage === 2 && selectedColorInfo) {
+            selectedColorInfo.style.display = 'block';
+            selectedColorInfo.innerHTML = `✓ Цвет команды: <strong>${teamColor.toUpperCase()}</strong>`;
+        }
+    }
+    
+    init();
+</script>
+</body>
+</html>
